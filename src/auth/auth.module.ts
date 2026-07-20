@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 
 import { AuthService } from './auth.service';
@@ -10,12 +11,18 @@ import { RolesGuard } from './roles.guard';
 
 @Module({
   imports: [
+    ConfigModule,
     UsersModule,
-    JwtModule.register({
-      secret: 'SECRET_KEY',
-      signOptions: {
-        expiresIn: '1h',
-      },
+
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: '1h',
+        },
+      }),
     }),
   ],
 
@@ -28,5 +35,7 @@ import { RolesGuard } from './roles.guard';
   controllers: [
     AuthController,
   ],
+
+  exports: [JwtModule],
 })
 export class AuthModule {}
