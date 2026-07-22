@@ -8,10 +8,7 @@ async function bootstrap() {
 
   // Enable frontend access
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'https://your-vercel-frontend-url.vercel.app',
-    ],
+    origin: true,
     credentials: true,
   });
 
