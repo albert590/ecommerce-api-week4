@@ -10,8 +10,12 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+
   async register(registerDto: any) {
-    const user = await this.usersService.create(registerDto);
+
+    const user = await this.usersService.create(
+      registerDto,
+    );
 
     return {
       message: 'User registered successfully',
@@ -32,14 +36,32 @@ export class AuthService {
       };
     }
 
+
+    const isPasswordValid =
+      await this.usersService.validatePassword(
+        loginDto.password,
+        user.password,
+      );
+
+
+    if (!isPasswordValid) {
+      return {
+        message: 'Invalid credentials',
+      };
+    }
+
+
     const token = this.jwtService.sign({
       id: user._id,
       email: user.email,
+      role: user.role,
     });
+
 
     return {
       message: 'Login successful',
       access_token: token,
     };
   }
+
 }
