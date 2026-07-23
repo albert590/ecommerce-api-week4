@@ -12,11 +12,24 @@ export class AuthController {
 
   @Post('register')
   register(@Body() registerDto: RegisterDto) {
+
+    console.log(
+      "DTO INSTANCE:",
+      registerDto instanceof RegisterDto
+    );
+
+    console.log(
+      "DTO DATA:",
+      registerDto
+    );
+
     return this.authService.register(registerDto);
   }
+
 
   @Post('login')
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
+
 }

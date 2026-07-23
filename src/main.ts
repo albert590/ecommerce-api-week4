@@ -6,7 +6,6 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Allow Next.js frontend connection
   app.enableCors({
     origin: true,
     methods: [
@@ -26,8 +25,8 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,
-      transform: true,
+      whitelist: false,
+      transform: false,
     }),
   );
 
