@@ -12,50 +12,27 @@ export class UsersService {
     private readonly userModel: Model<User>,
   ) {}
 
-
   async create(userData: any) {
 
-    console.log(
-      "REGISTER DATA RECEIVED:",
-      userData
+    if (!userData.password) {
+      throw new Error('Password is required');
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      userData.password,
+      10,
     );
 
+    const user = new this.userModel({
+      ...userData,
+      password: hashedPassword,
+    });
 
-    if (!userData.password) {
-      throw new Error(
-        "Password is required"
-      );
-    }
+    const savedUser = await user.save();
 
+    const { password, ...safeUser } = savedUser.toObject();
 
-    const existingUser =
-      await this.userModel.findOne({
-        email: userData.email,
-      });
-
-
-    if (existingUser) {
-      throw new Error(
-        "Email already exists"
-      );
-    }
-
-
-    const hashedPassword =
-      await bcrypt.hash(
-        userData.password,
-        10,
-      );
-
-
-    const user =
-      new this.userModel({
-        ...userData,
-        password: hashedPassword,
-      });
-
-
-    return user.save();
+    return safeUser;
   }
 
 
@@ -70,9 +47,7 @@ export class UsersService {
 
 
   async findByEmail(email: string) {
-    return this.userModel.findOne({
-      email,
-    });
+    return this.userModel.findOne({ email });
   }
 
 
@@ -80,10 +55,7 @@ export class UsersService {
     password: string,
     hashedPassword: string,
   ) {
-    return bcrypt.compare(
-      password,
-      hashedPassword,
-    );
+    return bcrypt.compare(password, hashedPassword);
   }
 
 
