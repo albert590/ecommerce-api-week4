@@ -16,6 +16,14 @@ export class User extends Document {
   @Prop({ default: 'customer' })
   role: string;
 
+  // Password Reset Token
+  @Prop({ default: null })
+  resetToken: string;
+
+  // Password Reset Token Expiry
+  @Prop({ default: null })
+  resetTokenExpiry: Date;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const UserSchema =
+  SchemaFactory.createForClass(User);

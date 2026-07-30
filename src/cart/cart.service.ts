@@ -1,31 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Cart } from './schemas/cart.schema';
+import { Cart, CartDocument } from './schemas/cart.schema';
 
 @Injectable()
 export class CartService {
   constructor(
     @InjectModel(Cart.name)
-    private readonly cartModel: Model<Cart>,
+    private readonly cartModel: Model<CartDocument>,
   ) {}
-
-  async getCart(userId: string) {
-    return this.cartModel.findOne({ userId });
-  }
 
   async addToCart(userId: string, item: any) {
     let cart = await this.cartModel.findOne({ userId });
 
     if (!cart) {
-      cart = new this.cartModel({
+      return this.cartModel.create({
         userId,
-        items: [],
+        items: [item],
       });
     }
 
     const existingItem = cart.items.find(
-      (i) => i.productId === item.productId,
+      (i: any) => i.productId.toString() === item.productId.toString(),
     );
 
     if (existingItem) {
@@ -34,7 +30,15 @@ export class CartService {
       cart.items.push(item);
     }
 
-    return cart.save();
+    return this.cartModel.findOneAndUpdate(
+      { userId },
+      { items: cart.items },
+      { new: true },
+    );
+  }
+
+  async getCart(userId: string) {
+    return this.cartModel.findOne({ userId });
   }
 
   async removeFromCart(userId: string, productId: string) {
@@ -45,13 +49,21 @@ export class CartService {
     }
 
     cart.items = cart.items.filter(
-      (item) => item.productId !== productId,
+      (item: any) => item.productId.toString() !== productId,
     );
 
-    return cart.save();
+    return this.cartModel.findOneAndUpdate(
+      { userId },
+      { items: cart.items },
+      { new: true },
+    );
   }
 
   async clearCart(userId: string) {
-    return this.cartModel.findOneAndDelete({ userId });
+    return this.cartModel.findOneAndUpdate(
+      { userId },
+      { items: [] },
+      { new: true },
+    );
   }
 }

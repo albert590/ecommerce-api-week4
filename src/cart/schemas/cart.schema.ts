@@ -1,13 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
+export type CartDocument = HydratedDocument<Cart>;
 
 @Schema()
-export class Cart extends Document {
-
+export class Cart {
   @Prop({ required: true })
   userId: string;
-
 
   @Prop([
     {
@@ -24,6 +23,5 @@ export class Cart extends Document {
     quantity: number;
   }[];
 }
-
 
 export const CartSchema = SchemaFactory.createForClass(Cart);
