@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 @Schema()
 export class Product extends Document {
-
+  
   @Prop({ required: true })
   name: string;
 
@@ -16,11 +16,11 @@ export class Product extends Document {
   @Prop({ default: 0 })
   stock: number;
 
-  @Prop()
+  @Prop({ required: true })
   category: string;
 
-  @Prop()
-  image: string;
+  @Prop({ required: true })
+  imageUrl: string;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

@@ -12,15 +12,27 @@ import { ProductsService } from './products.service';
 
 @Controller('products')
 export class ProductsController {
+
   constructor(
     private readonly productsService: ProductsService,
   ) {}
 
+
+  // GET ALL PRODUCTS
   @Get()
   findAll() {
     return this.productsService.findAll();
   }
 
+
+  // SEED PRODUCTS
+  @Get('seed')
+  seedProducts() {
+    return this.productsService.seedProducts();
+  }
+
+
+  // GET SINGLE PRODUCT
   @Get(':id')
   findOne(
     @Param('id') id: string,
@@ -28,6 +40,8 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
+
+  // CREATE PRODUCT
   @Post()
   create(
     @Body() product: any,
@@ -35,6 +49,8 @@ export class ProductsController {
     return this.productsService.create(product);
   }
 
+
+  // UPDATE PRODUCT
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -46,10 +62,13 @@ export class ProductsController {
     );
   }
 
+
+  // DELETE PRODUCT
   @Delete(':id')
   remove(
     @Param('id') id: string,
   ) {
     return this.productsService.remove(id);
   }
+
 }
